@@ -16,6 +16,7 @@
 *.sbr
 *.so.*.*
 *.swp
+/.idea
 /.cproject
 /.project
 /.settings
