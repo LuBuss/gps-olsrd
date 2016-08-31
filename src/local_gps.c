@@ -36,12 +36,12 @@ Init_GPS(void){
 
 /**
  * GEO_TO_SHORT
- * Converts a geo position (longitude or Latitude) into a unsigned short equialent.
+ * Converts a geo position (longitude or Latitude) into a uint16_t equialent.
  *
  * @param {double} geo_position - A geo positions (longitude or Latitude) value
- * @return {unsigned short} the geo position in the compressed short version
+ * @return {uint16_t} the geo position in the compressed short version
  */
-unsigned short
+uint16_t
 Geo_To_Short(double geo_position){
     int geo_int_form = geo_position * GEO_ACCURACY;
     return geo_int_form % USHRT_MAX;
@@ -52,12 +52,12 @@ Geo_To_Short(double geo_position){
  * Converts a geo position (longitude or Latitude) into its original form by using the current gps position and finding
  * the losts possible match to this position.
  *
- * @param short_geo {unsigned short} - A compressed geo position gather from a communication message
+ * @param short_geo {uint16_t} - A compressed geo position gather from a communication message
  * @param current_geo {double} - The current geo position gather from this device
  * @return {double} - The full geo position of the short_geo position entered
  */
 double
-Short_To_Geo(unsigned short short_geo, double current_geo){
+Short_To_Geo(uint16_t short_geo, double current_geo){
     //declaring variables
     double geo1;
     double geo2;
@@ -85,9 +85,9 @@ Short_To_Geo(unsigned short short_geo, double current_geo){
  * GET_LATITUDE
  * uses the gps stream, to get the current latitude value and convert to the a short_geo
  *
- * return {unsigned short} the Latitude in the short form
+ * return {uint16_t} the Latitude in the short form
  */
-unsigned short
+uint16_t
 Get_Latitude(void){
 
     if (gps_read(&mygps_data) == -1){
@@ -120,9 +120,9 @@ Get_Latitude(void){
  * uses the gps stream, to get the current longitude value and convert to the a short_geo, if gps gets a fixed status
  * the Longitude and shortLong global variables are updated.
  *
- * return {unsigned short} the Longitude in the short form
+ * return {uint16_t} the Longitude in the short form
  */
-unsigned short
+uint16_t
 Get_Longitude(void){
 
     if (gps_read(&mygps_data) == -1){

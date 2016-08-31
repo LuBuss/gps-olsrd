@@ -53,6 +53,7 @@
 #include "build_msg.h"
 #include "net_olsr.h"
 #include "lq_plugin.h"
+#include "local_gps.h"
 
 static bool sending_tc = false;
 
@@ -115,6 +116,15 @@ olsr_build_hello_packet(struct hello_message *message, struct interface_olsr *ou
 
   message->ttl = 1;
   message->source_addr = olsr_cnf->main_addr;
+
+  /* Set Geo_Position */
+
+  message->latitude = Get_Latitude();
+  message->longitude = Get_Longitude();
+
+#ifdef DEBUG
+  OLSR_PRINTF(3, "Longitude: %d\n Latitude: %d\n", message->longitude, message->latitude);
+#endif /* DEBUG */
 
 #ifdef DEBUG
   OLSR_PRINTF(5, "On link:\n");
