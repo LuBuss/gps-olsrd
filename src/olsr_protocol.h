@@ -226,6 +226,8 @@ struct hellomsg {
   uint16_t reserved;
   uint8_t htime;
   uint8_t willingness;
+  uint16_t latitude;
+  uint16_t longitude;
   struct hellinfo hell_info[1];
 } __attribute__ ((packed));
 

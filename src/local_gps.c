@@ -12,6 +12,11 @@
 
 #define GEO_ACCURACY 10000
 
+struct gps_data_t mygps_data;
+uint16_t shortLati = 0;
+uint16_t shortLong = 0;
+double longitude = 0;
+double latitude = 0;
 
 /**
  *Initizes the GPS module
@@ -21,6 +26,10 @@
  */
 int
 Init_GPS(void){
+
+
+
+
     int rc;
     //Opening gpsd daemon and checking for connection
     if((rc = gps_open("localhost", "2947", &mygps_data)) == -1){
@@ -30,6 +39,8 @@ Init_GPS(void){
     } else {
         //Starts a stream of geo data
         gps_stream(&mygps_data, WATCH_ENABLE | WATCH_JSON, NULL);
+
+
         return 1;
     }
 }

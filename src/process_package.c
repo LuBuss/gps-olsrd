@@ -341,6 +341,8 @@ deserialize_hello(struct hello_message *hello, const void *ser)
 
   pkt_get_reltime(&curr, &hello->htime);
   pkt_get_u8(&curr, &hello->willingness);
+  pkt_get_u16(&curr, &hello->latitude);
+  pkt_get_u16(&curr, &hello->longitude);
 
   hello->neighbors = NULL;
 

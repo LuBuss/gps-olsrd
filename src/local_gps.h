@@ -7,11 +7,11 @@
 #include <gps.h>
 
 
-struct gps_data_t mygps_data;
-uint16_t shortLati;
-uint16_t shortLong;
-double longitude;
-double latitude;
+extern struct gps_data_t mygps_data;
+extern uint16_t shortLati;
+extern uint16_t shortLong;
+extern double longitude;
+extern double latitude;
 
 /**
  *Initizes the GPS module
@@ -19,7 +19,7 @@ double latitude;
  *@return {int} -1 setup failed
  *              1 setup successful
  */
-int Init_GPS(void);
+extern int Init_GPS(void);
 
 /**
  * GEO_TO_SHORT
@@ -28,7 +28,7 @@ int Init_GPS(void);
  * @param {double} geo_position - A geo positions (longitude or Latitude) value
  * @return {uint16_t} the geo position in the compressed short version
  */
-uint16_t Geo_To_Short(double geo_position);
+extern uint16_t Geo_To_Short(double geo_position);
 
 /**
  * SHORT_TO_GEO
@@ -39,7 +39,7 @@ uint16_t Geo_To_Short(double geo_position);
  * @param current_geo {double} - The current geo position gather from this device
  * @return {double} - The full geo position of the short_geo position entered
  */
-double Short_To_Geo(uint16_t short_geo, double current_geo);
+extern double Short_To_Geo(uint16_t short_geo, double current_geo);
 
 /**
  * GET_LATITUDE
@@ -48,7 +48,7 @@ double Short_To_Geo(uint16_t short_geo, double current_geo);
  *
  * return {uint16_t} the Latitude in the short form
  */
-uint16_t Get_Latitude(void);
+extern uint16_t Get_Latitude(void);
 
 /**
  * GET_LONGITUDE
@@ -57,6 +57,6 @@ uint16_t Get_Latitude(void);
  *
  * return {uint16_t} the Longitude in the short form
  */
-uint16_t Get_Longitude(void);
+extern uint16_t Get_Longitude(void);
 
 #endif //OLSRD_LOCAL_GPS_H

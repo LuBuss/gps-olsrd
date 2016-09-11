@@ -53,6 +53,8 @@
 struct hello_neighbor {
   uint8_t status;
   uint8_t link;
+  uint16_t longitude;
+  uint16_t latitude;
   union olsr_ip_addr main_address;
   union olsr_ip_addr address;
   struct hello_neighbor *next;

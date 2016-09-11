@@ -29,4 +29,5 @@
 /olsr_switch
 /olsr_switch.exe
 /olsr-setup.exe
+/src/.idea
 /src/cfgparser/olsrd_cfgparser
