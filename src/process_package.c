@@ -416,6 +416,8 @@ olsr_hello_tap(struct hello_message *message, struct interface_olsr *in_if, cons
    */
   struct link_entry *lnk = update_link_entry(&in_if->ip_addr, from_addr, message, in_if);
 
+
+
   /*check alias message->source_addr*/
   if (!ipequal(&message->source_addr,from_addr)){
     /*new alias of new neighbour are thrown in the mid table to speed up routing*/
@@ -490,6 +492,10 @@ olsr_hello_tap(struct hello_message *message, struct interface_olsr *in_if, cons
   /* Don't register neighbors of neighbors that announces WILL_NEVER */
   if (neighbor->willingness != WILL_NEVER)
     process_message_neighbors(neighbor, message);
+
+    /* Update longitude and latitude */
+    neighbor->longitude = message->longitude;
+    neighbor->latitude = message->latitude;
 
   /* Process changes immediately in case of MPR updates */
   olsr_process_changes();

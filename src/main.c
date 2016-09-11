@@ -78,6 +78,7 @@
 #include "pid_file.h"
 #include "lock_file.h"
 #include "cli.h"
+#include "local_gps.h"
 
 #ifdef __linux__
 #include <linux/types.h>
@@ -406,6 +407,13 @@ int main(int argc, char *argv[]) {
   /*
    * Initialisation
    */
+
+  /* Start GPS Module */
+  if(Init_GPS() == -1){
+    olsr_syslog(OLSR_LOG_INFO, "GPS was unable to be initialed");
+  } else {
+    olsr_syslog(OLSR_LOG_INFO, "GPS was initialed");
+  }
 
   /* setup debug printf destination */
   debug_handle = stdout;

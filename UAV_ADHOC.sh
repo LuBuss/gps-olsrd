@@ -2,9 +2,9 @@
 # Multi-UAV ad-hoc network (Raspberry Pi setup)
 
 # Check what that device is a Raspberry Pi
-if [ "$(uname -m)" != "armv6l" ]; then
-    echo "Script is only setup for Raspberry Pi"
-    exit
+if [ "$(uname -m)" != "armv7l" ]; then
+echo "Script is only setup for Raspberry Pi"
+exit
 fi
 
 # update system packages
@@ -17,48 +17,51 @@ sudo apt-get install git-all
 sudo apt-get install bison libbison-dev flex libfl-dev
 sudo apt-get install gtk
 
-if [! "$(olsrd -v)" ]; then
-    # Setup and install olsrd
-    cd ~
-    if [! -d "~/olsrd:"]; then
-        git clone https://LBuss@bitbucket.org/LBuss/multi-uav-olsrd.git
-        mv ~/multi-uav-olsrd ~/olsrd
-        #Need to create a conf file
-        sudo cp ~/olsrd/olsrd.conf /etc/olsrd/olsrd.conf
-        #to run sudo olsrd -i wlan0
-    fi
-
-    # Get latest update from the git repo
-    cd ~/olsrd
-    git pull origin master
-
-    # Build olsrd
-    make
-    sudo make install
+# Setup and install olsrd
+cd ~
+if [! -d "~/olsrd"]; then
+git clone https://LBuss@bitbucket.org/LBuss/multi-uav-olsrd.git
+mv ~/multi-uav-olsrd ~/olsrd
+#Need to create a conf file
 fi
 
-if [! "$(gpsd -V)" ]; then
-    #Setup GPS
-    #http://www.instructables.com/id/Raspberry-Pi-the-Neo-6M-GPS/step2/Turn-off-the-Serial-Console/
-    sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
-    sudo cp ~/olsrd/cmdline.txt /boot/cmdline.txt
+# Get latest update from the git repo
+cd ~/olsrd
+git pull origin master
 
-    # if this doesnt work pi3-disable-bt https://www.raspberrypi.org/forums/viewtopic.php?t=138223
-    # Currently needs to be setup manuelly
-    sudo echo "core_freq=250" >> /boot/config.txt
-    sudo echo "enable_uart=1" >> /boot/config.txt
+sudo cp ~/olsrd/olsrd.conf /etc/olsrd/olsrd.conf
+sudo cp /etc/network/interfaces /etc/network/interfaces_backup
+sudo cp ~/olsrd/interfaces /etc/network/interfaces #network will not work after this
+#to run sudo olsrd -i wlan0
 
-    # if this doesnt work http://www.instructables.com/id/Raspberry-Pi-the-Neo-6M-GPS/?ALLSTEPS
-    sudo systemctl stop serial-getty@ttyS0.service
-    sudo systemctl disable serial-getty@ttyS0.service
-    sudo systemctl stop gpsd.socket
-    sudo systemctl disable gpsd.socket
+# Build olsrd
+sudo make
+sudo make install
 
-    sudo apt-get install gpsd gpsd-clients
+#
+#Setup GPS
+#http://www.instructables.com/id/Raspberry-Pi-the-Neo-6M-GPS/step2/Turn-off-the-Serial-Console/
+#
 
-    # To run the GPS
-    #sudo killall gpsd
-    #sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock
-    #cgps -s
-fi
+# Edit the cmdline file to enable GPS through GPIO
+sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
+sudo cp ~/olsrd/cmdline.txt /boot/cmdline.txt
 
+# Edit the config file to enable GPS through GPIO
+# if this doesnt work pi3-disable-bt https://www.raspberrypi.org/forums/viewtopic.php?t=138223
+sudo cp /boot/config.txt /boot/config_backup.txt
+sudo cp ~/olsrd/config.txt /boot/config.txt
+
+# Setup the GPS applications
+sudo apt-get install gpsd gpsd-clients
+
+# if this doesnt work http://www.instructables.com/id/Raspberry-Pi-the-Neo-6M-GPS/?ALLSTEPS
+sudo systemctl stop serial-getty@ttyS0.service
+sudo systemctl disable serial-getty@ttyS0.service
+sudo systemctl stop gpsd.socket
+sudo systemctl disable gpsd.socket
+
+# To run the GPS
+#sudo killall gpsd
+#sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock
+#cgps -s

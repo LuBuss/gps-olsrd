@@ -68,6 +68,8 @@ struct hello_message {
   uint8_t hop_count;
   uint8_t ttl;
   uint8_t willingness;
+  uint16_t latitude;
+  uint16_t longitude;
   struct hello_neighbor *neighbors;
 
 };
