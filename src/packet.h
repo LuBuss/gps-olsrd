@@ -67,13 +67,11 @@ struct hello_message {
   olsr_reltime htime;
   union olsr_ip_addr source_addr;
   uint16_t packet_seq_number;
-  uint16_t latitude;    // Added latitude value
-  uint16_t longitude;   // Added longitude value
   uint8_t hop_count;
   uint8_t ttl;
   uint8_t willingness;
-  uint16_t latitude;
-  uint16_t longitude;
+  uint16_t latitude;     // Added latitude value
+  uint16_t longitude;    // Added longitude value
   struct hello_neighbor *neighbors;
 
 };
