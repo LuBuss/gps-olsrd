@@ -337,12 +337,12 @@ deserialize_hello(struct hello_message *hello, const void *ser)
   pkt_get_u8(&curr, &hello->ttl);
   pkt_get_u8(&curr, &hello->hop_count);
   pkt_get_u16(&curr, &hello->packet_seq_number);
-  pkt_ignore_u16(&curr);
+  pkt_ignore_u16(&curr);    // To be Altitude
 
   pkt_get_reltime(&curr, &hello->htime);
   pkt_get_u8(&curr, &hello->willingness);
-  pkt_get_u16(&curr, &hello->latitude);
-  pkt_get_u16(&curr, &hello->longitude);
+  pkt_get_u16(&curr, &hello->latitude);  // Get Latitude
+  pkt_get_u16(&curr, &hello->longitude); // Get Longitude
 
   hello->neighbors = NULL;
 
@@ -491,13 +491,33 @@ olsr_hello_tap(struct hello_message *message, struct interface_olsr *in_if, cons
     changes_topology = true;
   }
 
+  if (neighbor->latitude != message->latitude){
+    struct ipaddr_str buf;
+    OLSR_PRINTF(1, "latitude for %s changed from %d to %d - UPDATING\n", olsr_ip_to_string(&buf, &neighbor->neighbor_main_addr),
+                neighbor->latitude, message->latitude);
+    /*
+    *If willingness changed - recalculate
+    */
+    neighbor->latitude = message->latitude;
+    changes_neighborhood = true;
+    changes_topology = true;
+  }
+
+  if (neighbor->longitude != message->longitude){
+    struct ipaddr_str buf;
+    OLSR_PRINTF(1, "longitude for %s changed from %d to %d - UPDATING\n", olsr_ip_to_string(&buf, &neighbor->neighbor_main_addr),
+                neighbor->longitude, message->longitude);
+    /*
+    *If willingness changed - recalculate
+    */
+    neighbor->longitude = message->longitude;
+    changes_neighborhood = true;
+    changes_topology = true;
+  }
+
   /* Don't register neighbors of neighbors that announces WILL_NEVER */
   if (neighbor->willingness != WILL_NEVER)
     process_message_neighbors(neighbor, message);
-
-    /* Update longitude and latitude */
-    neighbor->longitude = message->longitude;
-    neighbor->latitude = message->latitude;
 
   /* Process changes immediately in case of MPR updates */
   olsr_process_changes();

@@ -294,10 +294,10 @@ serialize_hello4(struct hello_message *message, struct interface_olsr *ifp)
   m->v4.olsr_vtime = ifp->valtimes.hello;
 
   /* Fill HELLO header */
+  h->latitude = message->latitude;      // Added Logitutde
+  h->longitude = message->longitude;    // Added Latitude
   h->willingness = message->willingness;
   h->htime = reltime_to_me(ifp->hello_etime);
-  h->latitude = message->latitude;
-  h->longitude = message->longitude;
 
   memset(&h->reserved, 0, sizeof(uint16_t));
 

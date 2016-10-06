@@ -226,6 +226,8 @@ struct hellomsg {
   olsr_u16_t reserved;
   olsr_u8_t htime;
   olsr_u8_t willingness;
+  olsr_u16_t latitude;      // Added latitude value
+  olsr_u16_t longitude;     // Added longitude value
   struct hellinfo hell_info[1];
 };
 
