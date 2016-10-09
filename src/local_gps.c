@@ -111,9 +111,9 @@ Get_Latitude(void){
     } else {
         if (mygps_data.status == STATUS_FIX) {
             //Get latitude from mygps
-            latitude = mygps_data.fix.latitude;
+            latitude = mygps_data.fix.longitude;
             //convert geo to short
-            shortLati = Geo_To_Short(latitude);
+            shortLati = Geo_To_Short(longitude);
             return shortLati;
         } else {
             //unable to get gps fixed

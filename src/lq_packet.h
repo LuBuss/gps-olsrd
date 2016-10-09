@@ -104,6 +104,8 @@ struct lq_hello_message {
   struct olsr_common comm;
   olsr_reltime htime;
   uint8_t will;
+  uint16_t latitude;
+  uint16_t longitude;
   struct lq_hello_neighbor *neigh;
 };
 
@@ -118,6 +120,8 @@ struct lq_hello_header {
   uint16_t reserved;
   uint8_t htime;
   uint8_t will;
+  uint16_t latitude;
+  uint16_t longitude;
 };
 
 /* deserialized LQ_TC */

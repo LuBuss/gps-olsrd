@@ -1,4 +1,4 @@
-/*
+ /*
  * The olsr.org Optimized Link-State Routing daemon (olsrd)
  *
  * (c) by the OLSR project
@@ -344,6 +344,9 @@ deserialize_hello(struct hello_message *hello, const void *ser)
   pkt_get_u16(&curr, &hello->latitude);  // Get Latitude
   pkt_get_u16(&curr, &hello->longitude); // Get Longitude
 
+  OLSR_PRINTF(1, "size: %d\tpackseq: %d\thop_count: %d\tttl %d\tlat: %d\tlong: %d\n",size, hello->packet_seq_number, hello->hop_count, hello->ttl, hello->latitude, hello->longitude);
+  OLSR_PRINTF(1, "htime: %d\t vtime: %d\n", hello->htime, hello->vtime);
+
   hello->neighbors = NULL;
 
   limit = ((const unsigned char *)ser) + size;
@@ -351,10 +354,13 @@ deserialize_hello(struct hello_message *hello, const void *ser)
     const unsigned char *limit2 = curr;
     uint8_t link_code;
     uint16_t size2;
+    uint8_t temp;
 
     pkt_get_u8(&curr, &link_code);
-    pkt_ignore_u8(&curr);
+    pkt_get_u8(&curr, &temp); //should be an ignore
     pkt_get_u16(&curr, &size2);
+
+    OLSR_PRINTF(1, "limit: %s\tlink_code: %d\t size2: %d\ttemp: %d\n", limit, link_code, size2, temp);
 
     limit2 += size2;
     while (curr < limit2) {

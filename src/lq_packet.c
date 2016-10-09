@@ -62,6 +62,7 @@
 #include "build_msg.h"
 #include "net_olsr.h"
 #include "lq_plugin.h"
+#include "local_gps.h"
 
 bool lq_tc_pending = false;
 
@@ -86,6 +87,8 @@ create_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *outif)
 
   lq_hello->htime = outif->hello_etime;
   lq_hello->will = olsr_cnf->willingness;
+  lq_hello->latitude =  Get_Latitude();
+  lq_hello->longitude =  Get_Longitude();
 
   lq_hello->neigh = NULL;
 
@@ -344,6 +347,8 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
   head->reserved = 0;
   head->htime = reltime_to_me(lq_hello->htime);
   head->will = lq_hello->will;
+  head->latitude = htons(lq_hello->latitude);
+  head->longitude = htons(lq_hello->longitude);
 
   // 'off' is the offset of the byte following the LQ_HELLO header
 
