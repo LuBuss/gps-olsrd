@@ -240,12 +240,6 @@ olsr_print_two_hop_neighbor_table(void)
       }
     }
   }
-
-  OLSR_PRINTF(1, "\n--- %s ----------------------- GPS DATA\n\n" "16int Lat  16int Long  actual Lat actual Long\n", olsr_wallclock_string());
-  uint16_t uint_lat = Get_Latitude();
-  uint16_t uint_long = Get_Longitude();
-
-  OLSR_PRINTF(1, "%d  %d\n", uint_lat, uint_long);
 }
 #endif /* NODEBUG */
 
