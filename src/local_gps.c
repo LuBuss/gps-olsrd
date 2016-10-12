@@ -77,7 +77,7 @@ Short_To_Geo(uint16_t short_geo, uint8_t type){
     if (latitude == 0){
         OLSR_PRINTF(1, "Current GPS not working");
     } else if(type == 1){
-        current_geo = laitude;
+        current_geo = latitude;
     } else {
         current_geo = longitude;
     }
