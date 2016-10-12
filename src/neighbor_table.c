@@ -405,7 +405,7 @@ olsr_print_neighbor_table(void)
         struct ipaddr_str buf;
         struct lqtextbuffer lqbuffer1, lqbuffer2;
 
-        OLSR_PRINTF(1, "%-*s\t%5.3f\t%s\t%s\t%s  %s  %s  %d %d %d\n", iplen, olsr_ip_to_string(&buf, &neigh->neighbor_main_addr),
+        OLSR_PRINTF(1, "%-*s\t%5.3f\t%s\t%s\t%s  %s  %s %d %3.6f %3.6f\n", iplen, olsr_ip_to_string(&buf, &neigh->neighbor_main_addr),
                     (double)lnk->L_link_quality,
                     get_link_entry_text(lnk, '/', &lqbuffer1),
                     get_linkcost_text(lnk->linkcost,false, &lqbuffer2),
@@ -413,8 +413,8 @@ olsr_print_neighbor_table(void)
                     neigh->is_mpr ? "YES " : "NO  ",
                     olsr_lookup_mprs_set(&neigh->neighbor_main_addr) == NULL ? "NO  " : "YES ",
                     neigh->willingness,
-                    neigh->latitude,
-                    neigh->longitude);
+                    Short_To_Geo(neigh->latitude, Get_Latitude()),
+                    Short_To_Geo(neigh->longitude, Get_Longitude()));
       }
     }
   }
