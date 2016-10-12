@@ -68,14 +68,23 @@ Geo_To_Short(double geo_position){
  * @return {double} - The full geo position of the short_geo position entered
  */
 double
-Short_To_Geo(uint16_t short_geo, double current_geo){
+Short_To_Geo(uint16_t short_geo, uint8_t type){
     //declaring variables
     double geo1;
     double geo2;
 
+    double current_geo;
+    if (latitude == 0){
+        OLSR_PRINTF(1, "Current GPS not working");
+    } else if(type == 1){
+        current_geo = laitude;
+    } else {
+        current_geo = longitude;
+    }
+
     //finds the multipler that has been removed in compression
-    int multipler1 = floor((current_geo * GEO_ACCURACY) / USHRT_MAX) ;
-    int multipler2 = floor(((current_geo * GEO_ACCURACY) / USHRT_MAX) + 0.5);
+    int multipler1 = floor((current_geo * GEO_ACCURACY) / USHRT_MAX) ;  //23
+    int multipler2 = floor(((current_geo * GEO_ACCURACY) / USHRT_MAX) + 0.5); //22
 
     //finds the two possible multiplers are same
     if(multipler1 == multipler2){
@@ -90,7 +99,6 @@ Short_To_Geo(uint16_t short_geo, double current_geo){
     //Find the closest Geo Position and returns results
     return (abs(geo1 - current_geo) <= abs(geo2 - current_geo)) ? geo1 : geo2;
 }
-
 
 /**
  * GET_LATITUDE

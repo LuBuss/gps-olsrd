@@ -39,7 +39,7 @@ extern uint16_t Geo_To_Short(double geo_position);
  * @param current_geo {double} - The current geo position gather from this device
  * @return {double} - The full geo position of the short_geo position entered
  */
-extern double Short_To_Geo(uint16_t short_geo, double current_geo);
+extern double Short_To_Geo(uint16_t short_geo, uint8_t type);
 
 /**
  * GET_LATITUDE
