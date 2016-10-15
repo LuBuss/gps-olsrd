@@ -2,7 +2,6 @@
 // Created by pi on 27/08/16.
 //
 #include <stdbool.h>
-#include <gps.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -12,11 +11,11 @@
 
 #define GEO_ACCURACY 10000
 
-struct gps_data_t mygps_data;
 uint16_t shortLati = 0;
 uint16_t shortLong = 0;
 double longitude = 0;
 double latitude = 0;
+uint8_t first = 1;
 
 /**
  *Initizes the GPS module
@@ -25,11 +24,18 @@ double latitude = 0;
  *              1 setup successful
  */
 int
-Init_GPS(void){
+Init_GPS(double lat, double lon){
 
+    latitude = lat;
+    longitude = lon;
 
+    shortLati = Geo_To_Short(latitude);
+    shortLong = Geo_To_Short(longitude);
 
+    //No GPS so return valid
+    return 1;
 
+    /*
     int rc;
     //Opening gpsd daemon and checking for connection
     if((rc = gps_open("localhost", "2947", &mygps_data)) == -1){
@@ -40,9 +46,9 @@ Init_GPS(void){
         //Starts a stream of geo data
         gps_stream(&mygps_data, WATCH_ENABLE | WATCH_JSON, NULL);
 
-
         return 1;
     }
+     */
 }
 
 /**
@@ -109,6 +115,8 @@ Short_To_Geo(uint16_t short_geo, uint8_t type){
 uint16_t
 Get_Latitude(void){
 
+    return shortLati;
+    /*
     if (gps_read(&mygps_data) == -1){
         //unable to get gps data
         #ifdef DEBUG
@@ -132,6 +140,7 @@ Get_Latitude(void){
             return shortLati;
         }
     }
+     */
 }
 
 /**
@@ -144,6 +153,8 @@ Get_Latitude(void){
 uint16_t
 Get_Longitude(void){
 
+    return shortLong;
+    /*
     if (gps_read(&mygps_data) == -1){
     #ifdef DEBUG
         OLSR_PRINTF(1, "Not able to read GPS\n");
@@ -162,6 +173,6 @@ Get_Longitude(void){
             #endif
             return shortLong;
         }
-    }
+    }*/
 }
 

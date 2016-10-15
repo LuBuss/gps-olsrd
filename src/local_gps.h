@@ -4,7 +4,6 @@
 
 #ifndef OLSRD_LOCAL_GPS_H
 #define OLSRD_LOCAL_GPS_H
-#include <gps.h>
 
 
 extern struct gps_data_t mygps_data;
@@ -19,7 +18,7 @@ extern double latitude;
  *@return {int} -1 setup failed
  *              1 setup successful
  */
-extern int Init_GPS(void);
+extern int Init_GPS(double lat, double lon);
 
 /**
  * GEO_TO_SHORT

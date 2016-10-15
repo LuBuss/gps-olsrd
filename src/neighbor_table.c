@@ -417,10 +417,6 @@ olsr_print_neighbor_table(void)
                     Short_To_Geo(neigh->latitude, 1),
                     Short_To_Geo(neigh->longitude, 2));
 
-        //This will create a log of the gps for the neights in system log
-        olsr_syslog(OLSR_LOG_INFO, ",%.4f, %.4f, %.4f, %.4f, %s", Short_To_Geo(Get_Latitude(), 1),
-                    Short_To_Geo(neigh->latitude, 1),Short_To_Geo(Get_Longitude(), 2),Short_To_Geo(neigh->longitude, 2),
-                    get_link_entry_text(lnk, '/', &lqbuffer1));
       }
     }
   }
