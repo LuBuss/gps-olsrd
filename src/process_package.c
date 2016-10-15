@@ -344,9 +344,6 @@ deserialize_hello(struct hello_message *hello, const void *ser)
   pkt_get_u16(&curr, &hello->latitude);  // Get Latitude
   pkt_get_u16(&curr, &hello->longitude); // Get Longitude
 
-  OLSR_PRINTF(1, "size: %d\tpackseq: %d\thop_count: %d\tttl %d\tlat: %d\tlong: %d\n",size, hello->packet_seq_number, hello->hop_count, hello->ttl, hello->latitude, hello->longitude);
-  OLSR_PRINTF(1, "htime: %d\t vtime: %d\n", hello->htime, hello->vtime);
-
   hello->neighbors = NULL;
 
   limit = ((const unsigned char *)ser) + size;
