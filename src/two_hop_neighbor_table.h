@@ -67,6 +67,8 @@ struct neighbor_2_entry {
   uint8_t mpr_covered_count;           /*used in mpr calculation */
   uint8_t processed;                   /*used in mpr calculation */
   int16_t neighbor_2_pointer;          /* Neighbor count */
+  uint16_t latitude;                   /* latitude of this node */
+  uint16_t longitude;                  /* longitude of this node */
   struct neighbor_list_entry neighbor_2_nblist;
   struct neighbor_2_entry *prev;
   struct neighbor_2_entry *next;

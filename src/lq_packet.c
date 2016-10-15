@@ -127,6 +127,10 @@ create_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *outif)
       neigh->neigh_type = NOT_NEIGH;
     }
 
+    //set the gps position
+    neigh->longitude = walker->neighbor->longitude;
+    neigh->latitude = walker->neighbor->latitude;
+
     // set the entry's neighbour interface address
 
     neigh->addr = walker->neighbor_iface_addr;

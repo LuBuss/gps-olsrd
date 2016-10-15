@@ -217,7 +217,7 @@ olsr_print_two_hop_neighbor_table(void)
   int i;
   const int ipwidth = olsr_cnf->ip_version == AF_INET ? (INET_ADDRSTRLEN - 1) : (INET6_ADDRSTRLEN - 1);
 
-  OLSR_PRINTF(1, "\n--- %s ----------------------- TWO-HOP NEIGHBORS\n\n" "IP addr (2-hop)  IP addr (1-hop)  Total cost\n",
+  OLSR_PRINTF(1, "\n--- %s ----------------------- TWO-HOP NEIGHBORS\n\n" "IP addr (2-hop)  IP addr (1-hop)  Total cost   Latitude   Longitude\n",
               olsr_wallclock_string());
 
   for (i = 0; i < HASHSIZE; i++) {
@@ -235,8 +235,9 @@ olsr_print_two_hop_neighbor_table(void)
         } else {
           OLSR_PRINTF(1, "                 ");
         }
-        OLSR_PRINTF(1, "%-*s  %s\n", ipwidth, olsr_ip_to_string(&buf, &entry->neighbor->neighbor_main_addr),
-                    get_linkcost_text(entry->path_linkcost, false, &lqbuffer));
+        OLSR_PRINTF(1, "%-*s  %s %.4f %.4f\n", ipwidth, olsr_ip_to_string(&buf, &entry->neighbor->neighbor_main_addr),
+                    get_linkcost_text(entry->path_linkcost, false, &lqbuffer), Short_To_Geo(neigh2->latitude, 1),
+                    Short_To_Geo(neigh2->longitude, 2));
       }
     }
   }

@@ -148,6 +148,10 @@ process_message_neighbors(struct neighbor_entry *neighbor, const struct hello_me
 
           two_hop_neighbor->neighbor_2_pointer = 0;
 
+          /* Geo positions */
+          two_hop_neighbor->longitude = message_neighbors->longitude;
+          two_hop_neighbor->latitude = message_neighbors->latitude;
+
           two_hop_neighbor->neighbor_2_addr = message_neighbors->address;
 
           olsr_insert_two_hop_neighbor_table(two_hop_neighbor);
@@ -159,6 +163,10 @@ process_message_neighbors(struct neighbor_entry *neighbor, const struct hello_me
            */
           changes_neighborhood = true;
           changes_topology = true;
+
+          /* Geo positions Update*/
+          two_hop_neighbor->longitude = message_neighbors->longitude;
+          two_hop_neighbor->latitude = message_neighbors->latitude;
 
           linking_this_2_entries(neighbor, two_hop_neighbor, message->vtime);
         }
@@ -366,6 +374,8 @@ deserialize_hello(struct hello_message *hello, const void *ser)
       if (type == LQ_HELLO_MESSAGE) {
         olsr_deserialize_hello_lq_pair(&curr, neigh);
       }
+      pkt_get_u16(&curr, neigh->latitude);
+      pkt_get_u16(&curr, neigh->longitude);
       neigh->link = EXTRACT_LINK(link_code);
       neigh->status = EXTRACT_STATUS(link_code);
 

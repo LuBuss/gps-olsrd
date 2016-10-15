@@ -98,6 +98,8 @@ struct lq_hello_neighbor {
   union olsr_ip_addr addr;
   struct lq_hello_neighbor *next;
   uint32_t linkquality[0];
+  uint16_t latitude;
+  uint16_t longitude;
 };
 
 struct lq_hello_message {
