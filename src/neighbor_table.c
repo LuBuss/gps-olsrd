@@ -55,6 +55,7 @@
 #include "mpr_selector_set.h"
 #include "net_olsr.h"
 #include "local_gps.h"
+#include "log.h"
 
 struct neighbor_entry neighbortable[HASHSIZE];
 
@@ -415,6 +416,11 @@ olsr_print_neighbor_table(void)
                     neigh->willingness,
                     Short_To_Geo(neigh->latitude, 1),
                     Short_To_Geo(neigh->longitude, 2));
+
+        //This will create a log of the gps for the neights in system log
+        olsr_syslog(OLSR_LOG_INFO, ",%.4f, %.4f, %.4f, %.4f, %s", Short_To_Geo(Get_Latitude(), 1),
+                    Short_To_Geo(neigh->latitude, 1),Short_To_Geo(Get_Longitude(), 2),Short_To_Geo(neigh->longitude, 2),
+                    get_link_entry_text(lnk, '/', &lqbuffer1));
       }
     }
   }
