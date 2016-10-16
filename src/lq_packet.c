@@ -479,6 +479,10 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
         gps_location->latitude = neigh->latitude;
         gps_location->longitude = neigh->longitude;
 
+          //struct ipaddr_str tmp;
+          //OLSR_PRINTF(1, "%s \tlat: %.5f\t long: %.5f\n", olsr_ip_to_string(&tmp, &neigh->addr), Short_To_Geo(gps_location->latitude, 1),
+          //            Short_To_Geo(gps_location->longitude, 2));
+
         is_first = false;
       }
 

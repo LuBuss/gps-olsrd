@@ -10,7 +10,7 @@
 #include "local_gps.h"
 #include "defs.h"
 
-#define GEO_ACCURACY 10000
+#define GEO_ACCURACY 100000
 
 struct gps_data_t mygps_data;
 uint16_t shortLati = 0;

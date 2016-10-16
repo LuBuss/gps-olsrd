@@ -60,6 +60,8 @@
 #include "lq_plugin.h"
 #include "log.h"
 
+#include "local_gps.h"
+
 #include <stddef.h>
 
 static void process_message_neighbors(struct neighbor_entry *, const struct hello_message *);
@@ -371,11 +373,16 @@ deserialize_hello(struct hello_message *hello, const void *ser)
       pkt_get_ipaddress(&curr, &neigh->address);
       if (type == LQ_HELLO_MESSAGE) {
         olsr_deserialize_hello_lq_pair(&curr, neigh);
-        pkt_get_u16(&curr, &neigh->latitude);
-        pkt_get_u16(&curr, &neigh->longitude);
       }
+
+      pkt_get_u16(&curr, &neigh->latitude);
+      pkt_get_u16(&curr, &neigh->longitude);
       neigh->link = EXTRACT_LINK(link_code);
       neigh->status = EXTRACT_STATUS(link_code);
+
+        //struct ipaddr_str tmp; ERROR
+        //OLSR_PRINTF(1, "deserialize\t%s \tlat: %.5f\t long: %.5f\n", olsr_ip_to_string(&tmp, &neigh->address),
+        //            Short_To_Geo(neigh->latitude, 1), Short_To_Geo(neigh->longitude, 2));
 
       neigh->next = hello->neighbors;
       hello->neighbors = neigh;
