@@ -102,6 +102,12 @@ struct lq_hello_neighbor {
   uint16_t longitude;
 };
 
+//used for serialization
+struct gps_data {
+    uint16_t latitude;
+    uint16_t longitude;
+};
+
 struct lq_hello_message {
   struct olsr_common comm;
   olsr_reltime htime;

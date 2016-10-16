@@ -365,17 +365,15 @@ deserialize_hello(struct hello_message *hello, const void *ser)
     pkt_get_u8(&curr, &temp); //should be an ignore
     pkt_get_u16(&curr, &size2);
 
-    OLSR_PRINTF(1, "limit: %s\tlink_code: %d\t size2: %d\ttemp: %d\n", limit, link_code, size2, temp);
-
     limit2 += size2;
     while (curr < limit2) {
       struct hello_neighbor *neigh = olsr_malloc_hello_neighbor("HELLO deserialization");
       pkt_get_ipaddress(&curr, &neigh->address);
       if (type == LQ_HELLO_MESSAGE) {
         olsr_deserialize_hello_lq_pair(&curr, neigh);
+        pkt_get_u16(&curr, &neigh->latitude);
+        pkt_get_u16(&curr, &neigh->longitude);
       }
-      pkt_get_u16(&curr, neigh->latitude);
-      pkt_get_u16(&curr, neigh->longitude);
       neigh->link = EXTRACT_LINK(link_code);
       neigh->status = EXTRACT_STATUS(link_code);
 

@@ -337,6 +337,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
   int rem, size, req, expected_size = 0;
   struct lq_hello_info_header *info_head;
   struct lq_hello_neighbor *neigh;
+  struct gps_data *gps_location;
   unsigned char *buff;
   bool is_first;
   int i;
@@ -381,7 +382,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
         is_first = true;
         for (neigh = lq_hello->neigh; neigh != NULL; neigh = neigh->next) {
           if (0 == i && 0 == j)
-            expected_size += olsr_cnf->ipsize + olsr_sizeof_hello_lqdata();
+            expected_size += olsr_cnf->ipsize + olsr_sizeof_hello_lqdata() + sizeof(neigh->latitude) + sizeof(neigh->longitude);
           if (neigh->neigh_type == i && neigh->link_type == LINK_ORDER[j]) {
             if (is_first) {
               expected_size += sizeof(struct lq_hello_info_header);
@@ -471,6 +472,12 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
 
         // add the corresponding link quality
         size += olsr_serialize_hello_lq_pair(&buff[size], neigh);
+
+        gps_location = (struct gps_data*)ARM_NOWARN_ALIGN(buff + size);
+        size += sizeof(struct gps_data);
+
+        gps_location->latitude = neigh->latitude;
+        gps_location->longitude = neigh->longitude;
 
         is_first = false;
       }
