@@ -53,13 +53,13 @@
 struct hello_neighbor {
   uint8_t status;
   uint8_t link;
-  uint16_t latitude;    // Added latitude value
-  uint16_t longitude;   // Added longitude value
   union olsr_ip_addr main_address;
   union olsr_ip_addr address;
   struct hello_neighbor *next;
   olsr_linkcost cost;
   uint32_t linkquality[0];
+  uint16_t latitude;    // Added latitude value
+  uint16_t longitude;   // Added longitude value
 };
 
 struct hello_message {

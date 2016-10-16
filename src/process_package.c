@@ -371,18 +371,22 @@ deserialize_hello(struct hello_message *hello, const void *ser)
     while (curr < limit2) {
       struct hello_neighbor *neigh = olsr_malloc_hello_neighbor("HELLO deserialization");
       pkt_get_ipaddress(&curr, &neigh->address);
+
       if (type == LQ_HELLO_MESSAGE) {
         olsr_deserialize_hello_lq_pair(&curr, neigh);
       }
 
       pkt_get_u16(&curr, &neigh->latitude);
       pkt_get_u16(&curr, &neigh->longitude);
+
       neigh->link = EXTRACT_LINK(link_code);
       neigh->status = EXTRACT_STATUS(link_code);
 
-        //struct ipaddr_str tmp; ERROR
-        //OLSR_PRINTF(1, "deserialize\t%s \tlat: %.5f\t long: %.5f\n", olsr_ip_to_string(&tmp, &neigh->address),
-        //            Short_To_Geo(neigh->latitude, 1), Short_To_Geo(neigh->longitude, 2));
+      /* DEBUG Neigh
+        struct ipaddr_str tmp; //ERROR
+        OLSR_PRINTF(1, "deserialize\t%s \tlat: %.5f\t long: %.5f\t size: %d\n", olsr_ip_to_string(&tmp, &neigh->address),
+                    Short_To_Geo(neigh->latitude,1), Short_To_Geo(neigh->longitude,2), size2);
+      */
 
       neigh->next = hello->neighbors;
       hello->neighbors = neigh;
