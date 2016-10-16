@@ -182,6 +182,13 @@ olsr_serialize_hello_lq_pair(unsigned char *buff, struct lq_hello_neighbor *neig
   return active_lq_handler->serialize_hello_lq(buff, neigh->linkquality);
 }
 
+int
+olsr_serialize_hello_lq_geo(unsigned char *buff, struct lq_hello_neighbor *neigh)
+{
+  int size = active_lq_handler->serialize_hello_lq(buff, &neigh->latitude);
+  return size + active_lq_handler->serialize_hello_lq(buff, &neigh->longitude);
+}
+
 /**
  * olsr_deserialize_hello_lq_pair
  *

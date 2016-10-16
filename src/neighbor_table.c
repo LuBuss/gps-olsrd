@@ -406,7 +406,7 @@ olsr_print_neighbor_table(void)
         struct ipaddr_str buf;
         struct lqtextbuffer lqbuffer1, lqbuffer2;
 
-        OLSR_PRINTF(1, "%-*s\t%5.3f\t%s  %s  %s %s %s %d %.4f %.4f\n", iplen, olsr_ip_to_string(&buf, &neigh->neighbor_main_addr),
+        OLSR_PRINTF(1, "%-*s\t%5.3f\t%s  %s  %s %s %s %d %.5f %.5f\n", iplen, olsr_ip_to_string(&buf, &neigh->neighbor_main_addr),
                     (double)lnk->L_link_quality,
                     get_link_entry_text(lnk, '/', &lqbuffer1),
                     get_linkcost_text(lnk->linkcost,false, &lqbuffer2),

@@ -18,7 +18,7 @@ extern double latitude;
  *@return {int} -1 setup failed
  *              1 setup successful
  */
-extern int Init_GPS(double lat, double lon);
+extern int Init_GPS(void);
 
 /**
  * GEO_TO_SHORT

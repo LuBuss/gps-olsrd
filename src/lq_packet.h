@@ -126,6 +126,12 @@ struct lq_hello_header {
   uint16_t longitude;
 };
 
+//Used for serialization
+struct gps_data {
+  uint16_t latitude;
+  uint16_t longitude;
+};
+
 /* deserialized LQ_TC */
 struct lq_tc_message {
   struct olsr_common comm;

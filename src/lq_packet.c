@@ -131,9 +131,15 @@ create_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *outif)
     neigh->longitude = walker->neighbor->longitude;
     neigh->latitude = walker->neighbor->latitude;
 
+
+
     // set the entry's neighbour interface address
 
     neigh->addr = walker->neighbor_iface_addr;
+
+              struct ipaddr_str buf;
+              OLSR_PRINTF(1, "%s \tlong: %.5f\t lat: %.5f\n", olsr_ip_to_string(&buf, &neigh->addr), Short_To_Geo(neigh->latitude, 1),
+                          Short_To_Geo(neigh->longitude, 2));
 
     // queue the neighbour entry
     neigh->next = lq_hello->neigh;
@@ -336,6 +342,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
   static const int LINK_ORDER[] = { SYM_LINK, UNSPEC_LINK, ASYM_LINK, LOST_LINK };
   int rem, size, req, expected_size = 0;
   struct lq_hello_info_header *info_head;
+  struct gps_data *gps_location;
   struct lq_hello_neighbor *neigh;
   unsigned char *buff;
   bool is_first;
@@ -381,7 +388,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
         is_first = true;
         for (neigh = lq_hello->neigh; neigh != NULL; neigh = neigh->next) {
           if (0 == i && 0 == j)
-            expected_size += olsr_cnf->ipsize + olsr_sizeof_hello_lqdata();
+            expected_size += olsr_cnf->ipsize + olsr_sizeof_hello_lqdata() + sizeof(neigh->longitude) + sizeof(neigh->longitude);
           if (neigh->neigh_type == i && neigh->link_type == LINK_ORDER[j]) {
             if (is_first) {
               expected_size += sizeof(struct lq_hello_info_header);
@@ -471,6 +478,17 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
 
         // add the corresponding link quality
         size += olsr_serialize_hello_lq_pair(&buff[size], neigh);
+        //serialize here
+        gps_location = (struct gps_data *)ARM_NOWARN_ALIGN(buff + size);
+        size += sizeof(struct gps_data);
+
+        gps_location->latitude = neigh->latitude;
+        gps_location->longitude = neigh->longitude;
+
+        struct ipaddr_str buf;
+        OLSR_PRINTF(1, "Serialize %s \tlong: %.5f\t lat: %.5f\n", olsr_ip_to_string(&buf, &neigh->addr), Short_To_Geo(gps_location->latitude, 1),
+                      Short_To_Geo(gps_location->longitude, 2));
+
 
         is_first = false;
       }

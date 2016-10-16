@@ -409,7 +409,7 @@ int main(int argc, char *argv[]) {
    */
 
   /* Start GPS Module */
-  if(Init_GPS(-27.2381, 153.0999) == -1){
+  if(Init_GPS() == -1){
     olsr_syslog(OLSR_LOG_INFO, "GPS was unable to be initialed");
   } else {
     olsr_syslog(OLSR_LOG_INFO, "GPS was initialed");

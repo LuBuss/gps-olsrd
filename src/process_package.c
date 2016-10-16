@@ -59,6 +59,7 @@
 #include "net_olsr.h"
 #include "lq_plugin.h"
 #include "log.h"
+#include "local_gps.h"
 
 #include <stddef.h>
 
@@ -82,6 +83,8 @@ process_message_neighbors(struct neighbor_entry *neighbor, const struct hello_me
   for (message_neighbors = message->neighbors; message_neighbors != NULL; message_neighbors = message_neighbors->next) {
     union olsr_ip_addr *neigh_addr;
     struct neighbor_2_entry *two_hop_neighbor;
+
+      //HERE
 
     /*
      *check all interfaces
@@ -168,6 +171,10 @@ process_message_neighbors(struct neighbor_entry *neighbor, const struct hello_me
           two_hop_neighbor->longitude = message_neighbors->longitude;
           two_hop_neighbor->latitude = message_neighbors->latitude;
 
+          struct ipaddr_str buf;
+            /*olsr_syslog(OLSR_LOG_INFO, "%s \tlong: %.5f\t lat: %.5f\n", olsr_ip_to_string(&buf, &neighbor->neighbor_main_addr), Short_To_Geo(two_hop_neighbor->latitude, 1),
+                        Short_To_Geo(two_hop_neighbor->longitude, 2));
+*/
           linking_this_2_entries(neighbor, two_hop_neighbor, message->vtime);
         }
       }
@@ -365,7 +372,6 @@ deserialize_hello(struct hello_message *hello, const void *ser)
     pkt_get_u8(&curr, &temp); //should be an ignore
     pkt_get_u16(&curr, &size2);
 
-    OLSR_PRINTF(1, "limit: %s\tlink_code: %d\t size2: %d\ttemp: %d\n", limit, link_code, size2, temp);
 
     limit2 += size2;
     while (curr < limit2) {
@@ -373,9 +379,9 @@ deserialize_hello(struct hello_message *hello, const void *ser)
       pkt_get_ipaddress(&curr, &neigh->address);
       if (type == LQ_HELLO_MESSAGE) {
         olsr_deserialize_hello_lq_pair(&curr, neigh);
+        pkt_get_u16(&curr, &neigh->latitude);
+        pkt_get_u16(&curr, &neigh->longitude);
       }
-      pkt_get_u16(&curr, neigh->latitude);
-      pkt_get_u16(&curr, neigh->longitude);
       neigh->link = EXTRACT_LINK(link_code);
       neigh->status = EXTRACT_STATUS(link_code);
 

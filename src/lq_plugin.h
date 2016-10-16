@@ -121,6 +121,7 @@ void register_lq_handler(struct lq_handler *handler, const char *name);
 olsr_linkcost olsr_calc_tc_cost(const struct tc_edge_entry *);
 
 int olsr_serialize_hello_lq_pair(unsigned char *buff, struct lq_hello_neighbor *neigh);
+int olsr_serialize_hello_lq_geo(unsigned char *buff, struct lq_hello_neighbor *neigh);
 void olsr_deserialize_hello_lq_pair(const uint8_t ** curr, struct hello_neighbor *neigh);
 int olsr_serialize_tc_lq_pair(unsigned char *buff, struct tc_mpr_addr *neigh);
 void olsr_deserialize_tc_lq_pair(const uint8_t ** curr, struct tc_edge_entry *edge);

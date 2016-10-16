@@ -24,10 +24,10 @@ uint8_t first = 1;
  *              1 setup successful
  */
 int
-Init_GPS(double lat, double lon){
+Init_GPS(void){
 
-    latitude = lat;
-    longitude = lon;
+    latitude = -27.2381;
+    longitude = 153.0999;
 
     shortLati = Geo_To_Short(latitude);
     shortLong = Geo_To_Short(longitude);
