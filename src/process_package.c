@@ -171,7 +171,7 @@ process_message_neighbors(struct neighbor_entry *neighbor, const struct hello_me
           two_hop_neighbor->longitude = message_neighbors->longitude;
           two_hop_neighbor->latitude = message_neighbors->latitude;
 
-          struct ipaddr_str buf;
+          //struct ipaddr_str buf;
             /*olsr_syslog(OLSR_LOG_INFO, "%s \tlong: %.5f\t lat: %.5f\n", olsr_ip_to_string(&buf, &neighbor->neighbor_main_addr), Short_To_Geo(two_hop_neighbor->latitude, 1),
                         Short_To_Geo(two_hop_neighbor->longitude, 2));
 */
