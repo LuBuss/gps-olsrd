@@ -49,6 +49,7 @@
 #include <sys/stat.h>
 #include <assert.h>
 #include <fcntl.h>
+#include "gps_socket.h"
 #if defined(__linux__) && !defined(__ANDROID__)
   #ifdef __GLIBC__
     #include <execinfo.h>
@@ -414,6 +415,7 @@ int main(int argc, char *argv[]) {
   } else {
     olsr_syslog(OLSR_LOG_INFO, "GPS was initialed");
   }
+  gps_socket_init();
 
   /* setup debug printf destination */
   debug_handle = stdout;
