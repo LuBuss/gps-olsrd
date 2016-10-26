@@ -98,12 +98,22 @@ struct lq_hello_neighbor {
   union olsr_ip_addr addr;
   struct lq_hello_neighbor *next;
   uint32_t linkquality[0];
+  uint16_t latitude;
+  uint16_t longitude;
+};
+
+//used for serialization
+struct gps_data {
+    uint16_t latitude;
+    uint16_t longitude;
 };
 
 struct lq_hello_message {
   struct olsr_common comm;
   olsr_reltime htime;
   uint8_t will;
+  uint16_t latitude;
+  uint16_t longitude;
   struct lq_hello_neighbor *neigh;
 };
 
@@ -118,6 +128,8 @@ struct lq_hello_header {
   uint16_t reserved;
   uint8_t htime;
   uint8_t will;
+  uint16_t latitude;
+  uint16_t longitude;
 };
 
 /* deserialized LQ_TC */

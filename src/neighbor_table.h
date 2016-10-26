@@ -64,6 +64,8 @@ struct neighbor_entry {
   union olsr_ip_addr neighbor_main_addr;
   uint8_t status;
   uint8_t willingness;
+  uint16_t latitude;
+  uint16_t longitude;
   bool is_mpr;
   bool was_mpr;                        /* Used to detect changes in MPR */
   bool skip;

@@ -48,6 +48,7 @@
 
 #include "packet.h"
 #include "olsr_protocol.h"
+#include "local_gps.h"
 #include <time.h>               /* For clock_t */
 
 void set_empty_tc_timer(uint32_t);

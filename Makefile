@@ -53,7 +53,7 @@ include Makefile.inc
 # pass generated variables to save time
 MAKECMD = $(MAKE) OS="$(OS)" WARNINGS="$(WARNINGS)" VERBOSE="$(VERBOSE)" SANITIZE_ADDRESS="$(SANITIZE_ADDRESS)"
 
-LIBS +=		$(OS_LIB_DYNLOAD)
+LIBS +=		$(OS_LIB_DYNLOAD) -lm -lgps
 ifeq ($(OS), win32)
 LDFLAGS +=	-Wl,--out-implib=libolsrd.a
 LDFLAGS +=	-Wl,--export-all-symbols

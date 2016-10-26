@@ -58,6 +58,8 @@ struct hello_neighbor {
   struct hello_neighbor *next;
   olsr_linkcost cost;
   uint32_t linkquality[0];
+  uint16_t latitude;    // Added latitude value
+  uint16_t longitude;   // Added longitude value
 };
 
 struct hello_message {
@@ -68,6 +70,8 @@ struct hello_message {
   uint8_t hop_count;
   uint8_t ttl;
   uint8_t willingness;
+  uint16_t latitude;     // Added latitude value
+  uint16_t longitude;    // Added longitude value
   struct hello_neighbor *neighbors;
 
 };

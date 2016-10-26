@@ -56,8 +56,8 @@
 #define OLSR_IPV4_HDRSIZE          12
 #define OLSR_IPV6_HDRSIZE          24
 
-#define OLSR_HELLO_IPV4_HDRSIZE    (OLSR_IPV4_HDRSIZE + 4)
-#define OLSR_HELLO_IPV6_HDRSIZE    (OLSR_IPV6_HDRSIZE + 4)
+#define OLSR_HELLO_IPV4_HDRSIZE    (OLSR_IPV4_HDRSIZE + 8)
+#define OLSR_HELLO_IPV6_HDRSIZE    (OLSR_IPV6_HDRSIZE + 8)
 #define OLSR_TC_IPV4_HDRSIZE       (OLSR_IPV4_HDRSIZE + 4)
 #define OLSR_TC_IPV6_HDRSIZE       (OLSR_IPV6_HDRSIZE + 4)
 #define OLSR_MID_IPV4_HDRSIZE      OLSR_IPV4_HDRSIZE
@@ -294,6 +294,8 @@ serialize_hello4(struct hello_message *message, struct interface_olsr *ifp)
   m->v4.olsr_vtime = ifp->valtimes.hello;
 
   /* Fill HELLO header */
+  h->latitude = message->latitude;      // Added Logitutde
+  h->longitude = message->longitude;    // Added Latitude
   h->willingness = message->willingness;
   h->htime = reltime_to_me(ifp->hello_etime);
 

@@ -62,6 +62,7 @@
 #include "build_msg.h"
 #include "net_olsr.h"
 #include "lq_plugin.h"
+#include "local_gps.h"
 
 bool lq_tc_pending = false;
 
@@ -86,6 +87,8 @@ create_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *outif)
 
   lq_hello->htime = outif->hello_etime;
   lq_hello->will = olsr_cnf->willingness;
+  lq_hello->latitude =  Get_Latitude();
+  lq_hello->longitude =  Get_Longitude();
 
   lq_hello->neigh = NULL;
 
@@ -123,6 +126,10 @@ create_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *outif)
       OLSR_PRINTF(0, "Error: neigh_type undefined");
       neigh->neigh_type = NOT_NEIGH;
     }
+
+    //set the gps position
+    neigh->longitude = walker->neighbor->longitude;
+    neigh->latitude = walker->neighbor->latitude;
 
     // set the entry's neighbour interface address
 
@@ -330,6 +337,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
   int rem, size, req, expected_size = 0;
   struct lq_hello_info_header *info_head;
   struct lq_hello_neighbor *neigh;
+  struct gps_data *gps_location;
   unsigned char *buff;
   bool is_first;
   int i;
@@ -344,6 +352,8 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
   head->reserved = 0;
   head->htime = reltime_to_me(lq_hello->htime);
   head->will = lq_hello->will;
+  head->latitude = htons(lq_hello->latitude);
+  head->longitude = htons(lq_hello->longitude);
 
   // 'off' is the offset of the byte following the LQ_HELLO header
 
@@ -372,7 +382,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
         is_first = true;
         for (neigh = lq_hello->neigh; neigh != NULL; neigh = neigh->next) {
           if (0 == i && 0 == j)
-            expected_size += olsr_cnf->ipsize + olsr_sizeof_hello_lqdata();
+            expected_size += olsr_cnf->ipsize + olsr_sizeof_hello_lqdata() + sizeof(struct gps_data);
           if (neigh->neigh_type == i && neigh->link_type == LINK_ORDER[j]) {
             if (is_first) {
               expected_size += sizeof(struct lq_hello_info_header);
@@ -407,7 +417,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
         // we need space for an IP address plus link quality
         // information
 
-        req = olsr_cnf->ipsize + olsr_sizeof_hello_lqdata();
+        req = olsr_cnf->ipsize + olsr_sizeof_hello_lqdata() + sizeof(struct gps_data);
 
         // no, we also need space for an info header, as this is the
         // first neighbor with the current neighbor type and link type
@@ -432,7 +442,6 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
           info_head->size = ntohs(buff + size - (unsigned char *)info_head);
 
           // output packet
-
           net_outbuffer_push(outif, msg_buffer, size + off);
 
           net_output(outif);
@@ -452,6 +461,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
           info_head = (struct lq_hello_info_header *)ARM_NOWARN_ALIGN(buff + size);
           size += sizeof(struct lq_hello_info_header);
 
+
           info_head->reserved = 0;
           info_head->link_code = CREATE_LINK_CODE(i, LINK_ORDER[j]);
         }
@@ -460,9 +470,21 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
         genipcopy(buff + size, &neigh->addr);
         size += olsr_cnf->ipsize;
 
-        // add the corresponding link quality
         size += olsr_serialize_hello_lq_pair(&buff[size], neigh);
+          // Add the geo location
+          gps_location = (struct gps_data*)ARM_NOWARN_ALIGN(buff + size);
+          size += sizeof(struct gps_data);
 
+          //serialize_lq_hello(buff + size, neigh->latitude);
+          gps_location->latitude = htons(neigh->latitude);
+          gps_location->longitude = htons(neigh->longitude);
+
+
+          /* DEBUG Neigh
+          struct ipaddr_str tmp;
+          OLSR_PRINTF(1, "Serializing %s \tlat: %.5f\t long: %.5f\t size %d\n", olsr_ip_to_string(&tmp, &neigh->addr), Short_To_Geo(neigh->latitude,1),
+                      Short_To_Geo(neigh->longitude,2), sizeof(buff));
+            */
         is_first = false;
       }
 
@@ -479,9 +501,7 @@ serialize_lq_hello(struct lq_hello_message *lq_hello, struct interface_olsr *out
   lq_hello->comm.size = size + off;
 
   serialize_common((struct olsr_common *)lq_hello);
-
   // move the message to the output buffer
-
   net_outbuffer_push(outif, msg_buffer, size + off);
 }
 

@@ -49,6 +49,7 @@
 #include <sys/stat.h>
 #include <assert.h>
 #include <fcntl.h>
+#include "gps_socket.h"
 #if defined(__linux__) && !defined(__ANDROID__)
   #ifdef __GLIBC__
     #include <execinfo.h>
@@ -78,6 +79,7 @@
 #include "pid_file.h"
 #include "lock_file.h"
 #include "cli.h"
+#include "local_gps.h"
 
 #ifdef __linux__
 #include <linux/types.h>
@@ -406,6 +408,14 @@ int main(int argc, char *argv[]) {
   /*
    * Initialisation
    */
+
+  /* Start GPS Module */
+  if(Init_GPS() == -1){
+    olsr_syslog(OLSR_LOG_INFO, "GPS was unable to be initialed");
+  } else {
+    olsr_syslog(OLSR_LOG_INFO, "GPS was initialed");
+  }
+  gps_socket_init();
 
   /* setup debug printf destination */
   debug_handle = stdout;

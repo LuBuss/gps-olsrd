@@ -54,6 +54,8 @@
 #include "link_set.h"
 #include "mpr_selector_set.h"
 #include "net_olsr.h"
+#include "local_gps.h"
+#include "log.h"
 
 struct neighbor_entry neighbortable[HASHSIZE];
 
@@ -393,7 +395,7 @@ olsr_print_neighbor_table(void)
 
   OLSR_PRINTF(1,
               "\n--- %s ------------------------------------------------ NEIGHBORS\n\n"
-              "%*s\tHyst\tLQ\tETX\tSYM   MPR   MPRS  will\n", olsr_wallclock_string(),
+              "%*s\tHyst\tLQ\tETX\tSYM   MPR   MPRS  will  Latitude  Longitude\n", olsr_wallclock_string(),
               iplen, "IP address");
 
   for (idx = 0; idx < HASHSIZE; idx++) {
@@ -404,14 +406,21 @@ olsr_print_neighbor_table(void)
         struct ipaddr_str buf;
         struct lqtextbuffer lqbuffer1, lqbuffer2;
 
-        OLSR_PRINTF(1, "%-*s\t%5.3f\t%s\t%s\t%s  %s  %s  %d\n", iplen, olsr_ip_to_string(&buf, &neigh->neighbor_main_addr),
+        OLSR_PRINTF(1, "%-*s\t%5.3f\t%s  %s  %s %s %s %d %.5f %.5f\n", iplen, olsr_ip_to_string(&buf, &neigh->neighbor_main_addr),
                     (double)lnk->L_link_quality,
                     get_link_entry_text(lnk, '/', &lqbuffer1),
                     get_linkcost_text(lnk->linkcost,false, &lqbuffer2),
                     neigh->status == SYM ? "YES " : "NO  ",
                     neigh->is_mpr ? "YES " : "NO  ",
                     olsr_lookup_mprs_set(&neigh->neighbor_main_addr) == NULL ? "NO  " : "YES ",
-                    neigh->willingness);
+                    neigh->willingness,
+                    Short_To_Geo(neigh->latitude, 1),
+                    Short_To_Geo(neigh->longitude, 2));
+
+        //This will create a log of the gps for the neights in system log
+        olsr_syslog(OLSR_LOG_INFO, ",%.5f, %.5f, %.5f, %.5f, %s", Short_To_Geo(Get_Latitude(), 1),
+                    Short_To_Geo(neigh->latitude, 1),Short_To_Geo(Get_Longitude(), 2),Short_To_Geo(neigh->longitude, 2),
+                    get_link_entry_text(lnk, '/', &lqbuffer1));
       }
     }
   }

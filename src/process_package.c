@@ -1,4 +1,4 @@
-/*
+ /*
  * The olsr.org Optimized Link-State Routing daemon (olsrd)
  *
  * (c) by the OLSR project
@@ -59,6 +59,8 @@
 #include "net_olsr.h"
 #include "lq_plugin.h"
 #include "log.h"
+
+#include "local_gps.h"
 
 #include <stddef.h>
 
@@ -148,6 +150,10 @@ process_message_neighbors(struct neighbor_entry *neighbor, const struct hello_me
 
           two_hop_neighbor->neighbor_2_pointer = 0;
 
+          /* Geo positions */
+          two_hop_neighbor->longitude = message_neighbors->longitude;
+          two_hop_neighbor->latitude = message_neighbors->latitude;
+
           two_hop_neighbor->neighbor_2_addr = message_neighbors->address;
 
           olsr_insert_two_hop_neighbor_table(two_hop_neighbor);
@@ -159,6 +165,10 @@ process_message_neighbors(struct neighbor_entry *neighbor, const struct hello_me
            */
           changes_neighborhood = true;
           changes_topology = true;
+
+          /* Geo positions Update*/
+          two_hop_neighbor->longitude = message_neighbors->longitude;
+          two_hop_neighbor->latitude = message_neighbors->latitude;
 
           linking_this_2_entries(neighbor, two_hop_neighbor, message->vtime);
         }
@@ -337,10 +347,12 @@ deserialize_hello(struct hello_message *hello, const void *ser)
   pkt_get_u8(&curr, &hello->ttl);
   pkt_get_u8(&curr, &hello->hop_count);
   pkt_get_u16(&curr, &hello->packet_seq_number);
-  pkt_ignore_u16(&curr);
+  pkt_ignore_u16(&curr);    // To be Altitude
 
   pkt_get_reltime(&curr, &hello->htime);
   pkt_get_u8(&curr, &hello->willingness);
+  pkt_get_u16(&curr, &hello->latitude);  // Get Latitude
+  pkt_get_u16(&curr, &hello->longitude); // Get Longitude
 
   hello->neighbors = NULL;
 
@@ -349,20 +361,32 @@ deserialize_hello(struct hello_message *hello, const void *ser)
     const unsigned char *limit2 = curr;
     uint8_t link_code;
     uint16_t size2;
+    uint8_t temp;
 
     pkt_get_u8(&curr, &link_code);
-    pkt_ignore_u8(&curr);
+    pkt_get_u8(&curr, &temp); //should be an ignore
     pkt_get_u16(&curr, &size2);
 
     limit2 += size2;
     while (curr < limit2) {
       struct hello_neighbor *neigh = olsr_malloc_hello_neighbor("HELLO deserialization");
       pkt_get_ipaddress(&curr, &neigh->address);
+
       if (type == LQ_HELLO_MESSAGE) {
         olsr_deserialize_hello_lq_pair(&curr, neigh);
       }
+
+      pkt_get_u16(&curr, &neigh->latitude);
+      pkt_get_u16(&curr, &neigh->longitude);
+
       neigh->link = EXTRACT_LINK(link_code);
       neigh->status = EXTRACT_STATUS(link_code);
+
+      /* DEBUG Neigh
+        struct ipaddr_str tmp; //ERROR
+        OLSR_PRINTF(1, "deserialize\t%s \tlat: %.5f\t long: %.5f\t size: %d\n", olsr_ip_to_string(&tmp, &neigh->address),
+                    Short_To_Geo(neigh->latitude,1), Short_To_Geo(neigh->longitude,2), size2);
+      */
 
       neigh->next = hello->neighbors;
       hello->neighbors = neigh;
@@ -415,6 +439,8 @@ olsr_hello_tap(struct hello_message *message, struct interface_olsr *in_if, cons
    * Update link status
    */
   struct link_entry *lnk = update_link_entry(&in_if->ip_addr, from_addr, message, in_if);
+
+
 
   /*check alias message->source_addr*/
   if (!ipequal(&message->source_addr,from_addr)){
@@ -483,6 +509,30 @@ olsr_hello_tap(struct hello_message *message, struct interface_olsr *in_if, cons
      *If willingness changed - recalculate
      */
     neighbor->willingness = message->willingness;
+    changes_neighborhood = true;
+    changes_topology = true;
+  }
+
+  if (neighbor->latitude != message->latitude){
+    struct ipaddr_str buf;
+    OLSR_PRINTF(1, "latitude for %s changed from %d to %d - UPDATING\n", olsr_ip_to_string(&buf, &neighbor->neighbor_main_addr),
+                neighbor->latitude, message->latitude);
+    /*
+    *If willingness changed - recalculate
+    */
+    neighbor->latitude = message->latitude;
+    changes_neighborhood = true;
+    changes_topology = true;
+  }
+
+  if (neighbor->longitude != message->longitude){
+    struct ipaddr_str buf;
+    OLSR_PRINTF(1, "longitude for %s changed from %d to %d - UPDATING\n", olsr_ip_to_string(&buf, &neighbor->neighbor_main_addr),
+                neighbor->longitude, message->longitude);
+    /*
+    *If willingness changed - recalculate
+    */
+    neighbor->longitude = message->longitude;
     changes_neighborhood = true;
     changes_topology = true;
   }
